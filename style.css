@@ -680,6 +680,21 @@ body {
     display: flex;
 }
 
+/* Hidden Mobile Keyboard Input */
+.mobile-keyboard-input {
+    position: fixed;
+    bottom: -9999px;
+    left: -9999px;
+    opacity: 0;
+    width: 0;
+    height: 0;
+    border: none;
+    padding: 0;
+    margin: 0;
+    font-size: 16px;
+    z-index: -999;
+}
+
 /* Close Button (Top-Left) */
 .editor-close-btn {
     position: absolute;
@@ -1797,18 +1812,21 @@ body.dark-theme .share-option:hover {
         left: 15px;
         width: 36px;
         height: 36px;
+        font-size: 20px;
     }
 
     .editor-settings-btn {
         bottom: 15px;
         left: 15px;
         padding: 10px 18px;
+        font-size: 14px;
     }
 
     .editor-action-btn {
         bottom: 15px;
         right: 15px;
         padding: 10px 18px;
+        font-size: 14px;
     }
 
     .color-bar-container {
@@ -1834,19 +1852,23 @@ body.dark-theme .share-option:hover {
     }
 
     .text-input-popup h3 {
+        font-size: 20px;
     }
 
     .text-input-popup label {
+        font-size: 14px;
     }
 
     .text-input-popup input[type="text"],
     .text-input-popup input[type="range"],
     .text-input-popup select,
     .text-input-popup input[type="color"] {
+        font-size: 16px;
         padding: 12px;
     }
 
     .popup-buttons button {
+        font-size: 14px;
         padding: 12px;
     }
 
@@ -1867,27 +1889,35 @@ body.dark-theme .share-option:hover {
     }
 
     .about-header h1 {
+        font-size: 28px;
     }
 
     .about-tagline {
+        font-size: 14px;
     }
 
     .about-body h2 {
+        font-size: 18px;
     }
 
     .about-body p {
+        font-size: 14px;
     }
 
     .about-features h3 {
+        font-size: 16px;
     }
 
     .about-features li {
+        font-size: 14px;
     }
 
     .about-footer p {
+        font-size: 12px;
     }
 
     .logo {
+        font-size: 18px;
     }
 
     .create-circle {
@@ -1896,16 +1926,20 @@ body.dark-theme .share-option:hover {
     }
 
     .plus-sign {
+        font-size: 60px;
     }
 
     .create-text {
+        font-size: 14px;
     }
 
     .tagline {
+        font-size: 32px;
         padding: 15px 20px;
     }
 
     .tagline-sub {
+        font-size: 24px;
     }
 }
 
@@ -1913,6 +1947,14 @@ body.dark-theme .share-option:hover {
 @media (min-width: 769px) and (max-width: 1024px) {
     .center-content {
         gap: 30px;
+    }
+
+    .tagline {
+        font-size: 48px;
+    }
+
+    .tagline-sub {
+        font-size: 28px;
     }
 }
 
@@ -1938,12 +1980,14 @@ body.dark-theme .share-option:hover {
         bottom: 20px;
         left: 20px;
         padding: 10px 22px;
+        font-size: 15px;
     }
 
     .editor-action-btn {
         bottom: 20px;
         right: 20px;
         padding: 10px 22px;
+        font-size: 15px;
     }
 }
 

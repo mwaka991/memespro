@@ -1,6 +1,7 @@
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 const textInput = document.getElementById('textInput');
+const mobileKeyboardInput = document.getElementById('mobileKeyboardInput');
 const fontSize = document.getElementById('fontSize');
 const fontFamily = document.getElementById('fontFamily');
 const fontColor = document.getElementById('fontColor');
@@ -54,6 +55,12 @@ function startTextInputMode(x, y) {
     elements.push(activeTextElement);
     selectedElement = activeTextElement;
     drawCanvas();
+    
+    // Clear and focus mobile keyboard input
+    mobileKeyboardInput.value = '';
+    mobileKeyboardInput.focus();
+    
+    // Also focus desktop canvas for keyboard input support
     canvas.focus();
 }
 
@@ -64,6 +71,8 @@ function endTextInputMode() {
     }
     isInTextInputMode = false;
     activeTextElement = null;
+    mobileKeyboardInput.value = '';
+    mobileKeyboardInput.blur();
     drawCanvas();
 }
 
@@ -79,6 +88,21 @@ document.addEventListener('keydown', (e) => {
     } else if (e.key.length === 1) {
         activeTextElement.text += e.key;
         drawCanvas();
+    }
+});
+
+// Handle mobile keyboard input
+mobileKeyboardInput.addEventListener('input', (e) => {
+    if (!isInTextInputMode || !activeTextElement) return;
+    activeTextElement.text = mobileKeyboardInput.value;
+    drawCanvas();
+});
+
+mobileKeyboardInput.addEventListener('keydown', (e) => {
+    if (!isInTextInputMode || !activeTextElement) return;
+    if (e.key === 'Enter') {
+        endTextInputMode();
+        mobileKeyboardInput.blur();
     }
 });
 
@@ -434,9 +458,11 @@ canvas.addEventListener('touchend', () => {
             startTextInputMode(window.pendingTouchX, window.pendingTouchY);
         } else if (selectedElement && selectedElement.type === 'text') {
             // Tapped on existing text - edit it
-            startTextInputMode(selectedElement.x, selectedElement.y);
             activeTextElement = selectedElement;
             isInTextInputMode = true;
+            mobileKeyboardInput.value = selectedElement.text;
+            mobileKeyboardInput.focus();
+            drawCanvas();
         }
         
         window.pendingTouchX = undefined;
