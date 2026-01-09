@@ -56,17 +56,18 @@ function startTextInputMode(x, y) {
     selectedElement = activeTextElement;
     drawCanvas();
     
-    // Clear and focus mobile keyboard input
+    // Clear mobile keyboard input
     mobileKeyboardInput.value = '';
     
-    // Scroll canvas into view before focusing keyboard
+    // Prevent viewport shift and focus keyboard
     setTimeout(() => {
-        canvas.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        // Add visual feedback class
+        const editorPage = document.getElementById('editorPage');
+        editorPage.classList.add('text-input-active');
+        
+        // Focus keyboard input which will trigger mobile keyboard
         mobileKeyboardInput.focus();
     }, 100);
-    
-    // Also focus desktop canvas for keyboard input support
-    canvas.focus();
 }
 
 // End text input mode
@@ -78,6 +79,11 @@ function endTextInputMode() {
     activeTextElement = null;
     mobileKeyboardInput.value = '';
     mobileKeyboardInput.blur();
+    
+    // Remove visual feedback class
+    const editorPage = document.getElementById('editorPage');
+    editorPage.classList.remove('text-input-active');
+    
     drawCanvas();
 }
 
@@ -613,3 +619,37 @@ document.addEventListener('click', (e) => {
         closeShareMenu();
     }
 });
+
+// Handle viewport changes for mobile keyboard
+let lastViewportHeight = window.innerHeight;
+window.addEventListener('resize', () => {
+    const currentHeight = window.innerHeight;
+    const editorPage = document.getElementById('editorPage');
+    
+    // If height decreased significantly, keyboard is showing
+    if (currentHeight < lastViewportHeight * 0.85) {
+        // Keyboard is visible - canvas area should remain visible
+        editorPage.classList.add('keyboard-visible');
+        
+        // Scroll canvas into view
+        setTimeout(() => {
+            const canvas = document.getElementById('canvas');
+            if (canvas) {
+                canvas.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }, 200);
+    } else {
+        // Keyboard is hidden
+        editorPage.classList.remove('keyboard-visible');
+    }
+    
+    lastViewportHeight = currentHeight;
+});
+
+// Prevent zoom on double tap
+document.addEventListener('touchend', (e) => {
+    if (e.touches.length <= 1) {
+        e.preventDefault();
+    }
+}, false);
+
