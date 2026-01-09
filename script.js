@@ -358,9 +358,9 @@ canvas.addEventListener('mouseleave', () => {
     isDrawing = false;
 });
 
-// Touch support for mobile
 canvas.addEventListener('touchstart', (e) => {
     e.preventDefault();
+    touchStartTime = Date.now();
     const touch = e.touches[0];
     const rect = canvas.getBoundingClientRect();
     const x = (touch.clientX - rect.left) * (canvas.width / rect.width);
@@ -377,9 +377,15 @@ canvas.addEventListener('touchstart', (e) => {
             offsetY = y - element.y;
             isDrawing = true;
             drawCanvas();
+            window.pendingTouchX = undefined;
+            window.pendingTouchY = undefined;
             return;
         }
     }
+    
+    // If empty space tapped, prepare to start text input
+    window.pendingTouchX = x;
+    window.pendingTouchY = y;
 });
 
 canvas.addEventListener('touchmove', (e) => {
@@ -401,7 +407,41 @@ canvas.addEventListener('touchmove', (e) => {
 });
 
 canvas.addEventListener('touchend', () => {
-    isDrawing = false;
+    if (isDrawing) {
+        isDrawing = false;
+        return;
+    }
+    
+    // If this was a tap (short touch) on empty space, start text input
+    const touchDuration = Date.now() - touchStartTime;
+    if (touchDuration < 300 && window.pendingTouchX !== undefined && window.pendingTouchY !== undefined && !selectedElement) {
+        // Check once more if tapped on empty space
+        let tappedOnElement = false;
+        for (let i = elements.length - 1; i >= 0; i--) {
+            const element = elements[i];
+            if (window.pendingTouchX >= element.x - element.width / 2 &&
+                window.pendingTouchX <= element.x + element.width / 2 &&
+                window.pendingTouchY >= element.y - element.height / 2 &&
+                window.pendingTouchY <= element.y + element.height / 2) {
+                tappedOnElement = true;
+                selectedElement = element;
+                break;
+            }
+        }
+        
+        if (!tappedOnElement) {
+            // Tapped on empty space - start new text
+            startTextInputMode(window.pendingTouchX, window.pendingTouchY);
+        } else if (selectedElement && selectedElement.type === 'text') {
+            // Tapped on existing text - edit it
+            startTextInputMode(selectedElement.x, selectedElement.y);
+            activeTextElement = selectedElement;
+            isInTextInputMode = true;
+        }
+        
+        window.pendingTouchX = undefined;
+        window.pendingTouchY = undefined;
+    }
 });
 
 // ===== DOWNLOAD & SHARE =====
