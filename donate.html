@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Meme Viber</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #ffffff;
+  text-align: center;
+}
+
+.gif-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  padding: 20px;
+}
+
+.gif-container img {
+  width: 200px;
+  border-radius: 10px;
+}
+
+.buttons {
+  margin: 20px;
+}
+
+.btn {
+  padding: 15px 30px;
+  font-size: 16px;
+  border: none;
+  border-radius: 6px;
+  color: #fff;
+  cursor: pointer;
+  margin: 10px;
+}
+
+.red { background: #e74c3c; }
+.green { background: #2ecc71; }
+
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-box {
+  background: #fff;
+  padding: 25px;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 400px;
+  position: relative;
+}
+
+.modal-close-btn {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 28px;
+  cursor: pointer;
+  color: #333;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-close-btn:hover {
+  color: #e74c3c;
+}
+
+.modal-box input {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  font-size: 16px;
+}
+
+.submit {
+  width: 100%;
+  background: #2ecc71;
+  color: #fff;
+  padding: 12px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.thankyou {
+  display: none;
+  padding: 40px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- GIFS JUU -->
+<div class="gif-container">
+
+  <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExdWVvcGV6ZXp4OWF1czZseW56ODVnN2dwMXk4bjk4djR0ZHdnc3BjNyZlcD12MV9naWZzX3NlYXJjaCZjdD1n/qQdL532ZANbjy/giphy.gif">
+</div>
+
+<!-- BUTTONS -->
+<div class="buttons">
+  <button class="btn red" onclick="openModal('challenge')">Donate Challenge</button>
+  <button class="btn green" onclick="openModal('channel')">Donate Channel</button>
+</div>
+
+<!-- MODAL -->
+<div class="modal" id="modal">
+  <div class="modal-box">
+    <button class="modal-close-btn" onclick="closePaymentModal()">✕</button>
+    <h3 id="modalTitle"></h3>
+    <input id="phone" placeholder="Phone number">
+    <input id="amount" type="number" placeholder="Amount">
+    <button class="submit" onclick="donate()">Proceed</button>
+  </div>
+</div>
+
+<!-- THANK YOU -->
+<div class="thankyou" id="thankyou">
+  <h1>Thank You 🎉</h1>
+  <p>Complete payment on your phone</p>
+  <div class="gif-container">
+    <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExdWVvcGV6ZXp4OWF1czZseW56ODVnN2dwMXk4bjk4djR0ZHdnc3BjNyZlcD12MV9naWZzX3NlYXJjaCZjdD1n/4V3RuU0zSq1SC8Hh4x/giphy.gif">
+    <img src="https://media.giphy.com/media/l3vR85PnGsBwu1PFK/giphy.gif">
+    <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExdWVvcGV6ZXp4OWF1czZseW56ODVnN2dwMXk4bjk4djR0ZHdnc3BjNyZlcD12MV9naWZzX3NlYXJjaCZjdD1n/qQdL532ZANbjy/giphy.gif">
+  </div>
+</div>
+
+<script src="payment.js"></script>
+<script>
+  // Wrapper functions for HTML onclick handlers
+  function openModal(type) {
+    PaymentModule.openModal(type);
+  }
+
+  function closePaymentModal() {
+    document.getElementById("modal").style.display = "none";
+  }
+
+  function donate() {
+    PaymentModule.donate();
+  }
+</script>
+
+</body>
+</html>
