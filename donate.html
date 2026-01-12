@@ -58,6 +58,28 @@ body {
   border-radius: 10px;
   width: 90%;
   max-width: 400px;
+  position: relative;
+}
+
+.modal-close-btn {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 28px;
+  cursor: pointer;
+  color: #333;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-close-btn:hover {
+  color: #e74c3c;
 }
 
 .modal-box input {
@@ -88,9 +110,8 @@ body {
 
 <!-- GIFS JUU -->
 <div class="gif-container">
-  <img src="https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif">
-  <img src="https://media.giphy.com/media/l0MYt5jPR6QX5pnqM/giphy.gif">
-  <img src="https://media.giphy.com/media/26BRuo6sLetdllPAQ/giphy.gif">
+
+  <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExdWVvcGV6ZXp4OWF1czZseW56ODVnN2dwMXk4bjk4djR0ZHdnc3BjNyZlcD12MV9naWZzX3NlYXJjaCZjdD1n/qQdL532ZANbjy/giphy.gif">
 </div>
 
 <!-- BUTTONS -->
@@ -102,6 +123,7 @@ body {
 <!-- MODAL -->
 <div class="modal" id="modal">
   <div class="modal-box">
+    <button class="modal-close-btn" onclick="closePaymentModal()">✕</button>
     <h3 id="modalTitle"></h3>
     <input id="phone" placeholder="Phone number">
     <input id="amount" type="number" placeholder="Amount">
@@ -114,53 +136,47 @@ body {
   <h1>Thank You 🎉</h1>
   <p>Complete payment on your phone</p>
   <div class="gif-container">
-    <img src="https://media.giphy.com/media/3ohc13kxSTvRYmA3Pa/giphy.gif">
+    <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExdWVvcGV6ZXp4OWF1czZseW56ODVnN2dwMXk4bjk4djR0ZHdnc3BjNyZlcD12MV9naWZzX3NlYXJjaCZjdD1n/4V3RuU0zSq1SC8Hh4x/giphy.gif">
     <img src="https://media.giphy.com/media/l3vR85PnGsBwu1PFK/giphy.gif">
-    <img src="https://media.giphy.com/media/xT0GqssRweIhlz209i/giphy.gif">
+    <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExdWVvcGV6ZXp4OWF1czZseW56ODVnN2dwMXk4bjk4djR0ZHdnc3BjNyZlcD12MV9naWZzX3NlYXJjaCZjdD1n/qQdL532ZANbjy/giphy.gif">
   </div>
 </div>
 
+<script src="payment.js"></script>
 <script>
-function openModal(type) {
-  document.getElementById("modalTitle").innerText =
-    type === "challenge" ? "Donate for Challenge" : "Donate for Channel";
-  document.getElementById("modal").style.display = "flex";
-}
+  // Initialize payment module with API key
+  const getApiKey = async () => {
+    try {
+      const response = await fetch("/.env");
+      const envText = await response.text();
+      const match = envText.match(/FASTLIPA_API_KEY=(.+)/);
+      return match ? match[1].trim() : null;
+    } catch (error) {
+      console.error("Error loading .env file:", error);
+      return null;
+    }
+  };
 
-function donate() {
-  const phone = document.getElementById("phone").value;
-  const amount = document.getElementById("amount").value;
+  getApiKey().then(apiKey => {
+    if (apiKey) {
+      PaymentModule.init(apiKey);
+    } else {
+      console.warn("API key not loaded. Payment may not work.");
+    }
+  });
 
-  if (!phone || !amount) {
-    alert("Fill all fields");
-    return;
+  // Wrapper functions for HTML onclick handlers
+  function openModal(type) {
+    PaymentModule.openModal(type);
   }
 
-  fetch("https://api.fastlipa.com/api/create-transaction", {
-    method: "POST",
-    headers: {
-      "Authorization": "Bearer ",
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      number: phone,
-      amount: amount,
-      name: "Memes Channel Donation"
-    })
-  })
-  .then(res => res.json())
-  .then(data => {
-    console.log(data);
+  function closePaymentModal() {
+    document.getElementById("modal").style.display = "none";
+  }
 
-    if (data.status === "success") {
-      document.body.innerHTML =
-        document.getElementById("thankyou").outerHTML;
-    } else {
-      alert("Transaction failed");
-    }
-  })
-  .catch(() => alert("Network error"));
-}
+  function donate() {
+    PaymentModule.donate();
+  }
 </script>
 
 </body>
